@@ -10,6 +10,8 @@ COPY . .
 
 WORKDIR /app/backend
 
+RUN mkdir -p /app/data
+
 EXPOSE 5000
 
 CMD ["python", "app.py"]

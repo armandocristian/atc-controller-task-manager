@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash
 from database import db
 from models import Controller, Flight, Task
+import os
 
 def create_app():
 
@@ -8,11 +9,19 @@ def create_app():
 
     app.secret_key = "atc-secret-key"
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///atc.db"
+    DB_PATH = os.environ.get(
+    "DATABASE_PATH",
+    "atc.db"
+)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}" 
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
 
     return app
 
@@ -122,38 +131,39 @@ def init_db():
 
     db.create_all()
 
+    if Controller.query.count() == 0:
 
-    controller = Controller(
-        name="Alex Popescu",
-        sector="Bucharest ACC",
-        role="ATC Controller"
-    )
+        controller = Controller(
+            name="Alex Popescu",
+            sector="Bucharest ACC",
+            role="ATC Controller"
+        )
 
+        flight = Flight(
+            flight_number="RO301",
+            aircraft="B737",
+            departure="OTP",
+            destination="LHR",
+            status="ACTIVE"
+        )
 
-    flight = Flight(
-        flight_number="RO301",
-        aircraft="B737",
-        departure="OTP",
-        destination="LHR",
-        status="ACTIVE"
-    )
+        task = Task(
+            title="Verify landing clearance",
+            priority="HIGH",
+            status="PENDING",
+            controller=controller,
+            flight=flight
+        )
 
+        db.session.add(controller)
+        db.session.add(flight)
+        db.session.add(task)
 
-    task = Task(
-        title="Verify landing clearance",
-        priority="HIGH",
-        status="PENDING",
-        controller=controller,
-        flight=flight
-    )
+        db.session.commit()
 
+        return "Database initialized successfully"
 
-    db.session.add(controller)
-    db.session.add(flight)
-    db.session.add(task)
-
-
-    db.session.commit()
+    return "Database already contains data"
 
     flash("Task status updated!")
 

@@ -1,9 +1,22 @@
-version: "3.9"
-
 services:
+
   atc-app:
+
     build: .
+
     container_name: atc-app
+
     ports:
       - "5000:5000"
+
+    environment:
+      DATABASE_PATH: /app/data/atc.db
+
+    volumes:
+      - atc-data:/app/data
+
     restart: unless-stopped
+
+volumes:
+
+  atc-data:
