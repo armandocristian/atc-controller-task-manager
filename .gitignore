@@ -9,6 +9,10 @@ venv/
 
 # Database
 *.db
+*.db
+instance/
+__pycache__/
+.pytest_cache/
 
 # Flask
 instance/
