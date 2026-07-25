@@ -61,6 +61,25 @@ pipeline {
             }
         }
 
+
+	stage('Deploy Container') {
+
+    	     steps {
+
+        	echo "Deploying ATC application"
+
+        	sh '''
+        	docker stop atc-app || true
+        	docker rm atc-app || true
+
+        	docker run -d \
+        	--name atc-app \
+        	-p 5000:5000 \
+        	atc-todo-app:latest
+        	'''
+
+    	      }
+	}
     }
 
 
