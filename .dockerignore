@@ -1,6 +1,9 @@
-venv
-__pycache__
-.pytest_cache
+venv/
+__pycache__/
+.pytest_cache/
 *.pyc
+*.pyo
 *.db
-.git
+.git/
+.gitignore
+.env
