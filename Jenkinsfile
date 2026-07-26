@@ -71,11 +71,13 @@ pipeline {
         	sh '''
         	docker stop atc-app || true
         	docker rm atc-app || true
+		docker volume create atc-data || true
 
         	docker run -d \
         	--name atc-app \
         	-p 5000:5000 \
-        	atc-todo-app:latest
+        	-v atc-data:/app/data \
+		atc-todo-app:latest
         	'''
 
     	      }

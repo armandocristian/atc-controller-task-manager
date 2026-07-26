@@ -3,16 +3,27 @@ from database import db
 from models import Controller, Flight, Task
 import os
 
+
+
 def create_app():
+
 
     app = Flask(__name__)
 
-    app.secret_key = "atc-secret-key"
+
+    app.secret_key = "atc-secret-key-v2"
+
 
     DB_PATH = os.environ.get(
     "DATABASE_PATH",
-    "atc.db"
-)
+    "/app/data/atc.db"
+    )
+
+    db_folder = os.path.dirname(DB_PATH)
+
+    os.makedirs(db_folder, exist_ok=True)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
 
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}" 
 
@@ -21,9 +32,43 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
+
         db.create_all()
+        
+        if Controller.query.count() == 0:
+
+            controller = Controller(
+                name="Alex Popescu",
+                sector="Bucharest ACC",
+                role="ATC Controller"
+            )
+
+            flight = Flight(
+                flight_number="RO301",
+                aircraft="B737",
+                departure="OTP",
+                destination="LHR",
+                status="ACTIVE"
+            )
+
+            task = Task(
+                title="Verify landing clearance",
+                priority="HIGH",
+                status="PENDING",
+                controller=controller,
+                flight=flight
+            )
+
+            db.session.add(controller)
+            db.session.add(flight)
+            db.session.add(task)
+
+            db.session.commit()
+
+
 
     return app
+
 
 app = create_app()
 
@@ -125,50 +170,6 @@ def update_status(id, status):
 
 
     return redirect("/")
-
-@app.route("/init-db")
-def init_db():
-
-    db.create_all()
-
-    if Controller.query.count() == 0:
-
-        controller = Controller(
-            name="Alex Popescu",
-            sector="Bucharest ACC",
-            role="ATC Controller"
-        )
-
-        flight = Flight(
-            flight_number="RO301",
-            aircraft="B737",
-            departure="OTP",
-            destination="LHR",
-            status="ACTIVE"
-        )
-
-        task = Task(
-            title="Verify landing clearance",
-            priority="HIGH",
-            status="PENDING",
-            controller=controller,
-            flight=flight
-        )
-
-        db.session.add(controller)
-        db.session.add(flight)
-        db.session.add(task)
-
-        db.session.commit()
-
-        return "Database initialized successfully"
-
-    return "Database already contains data"
-
-    flash("Task status updated!")
-
-    return redirect("/")
-
 
 if __name__ == "__main__":
 

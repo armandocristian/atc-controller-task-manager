@@ -10,7 +10,7 @@ COPY . .
 
 WORKDIR /app/backend
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/backend/instance && chmod 777 /app/backend/instance
 
 EXPOSE 5000
 
