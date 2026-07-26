@@ -44,7 +44,8 @@ pipeline {
 
 		mkdir -p instance
 
-		export DATABASE_PATH=instance/test.db
+		export DATABASE_PATH=$(pwd)/instance/test.db
+
                 pytest
                 '''
 
