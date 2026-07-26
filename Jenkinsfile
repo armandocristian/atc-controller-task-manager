@@ -41,6 +41,7 @@ pipeline {
 
                 sh '''
                 . venv/bin/activate
+		export DATABASE_PATH=instance/test.db
                 pytest
                 '''
 
