@@ -60,7 +60,7 @@ pipeline {
                 echo "Building Docker image"
 
                 sh '''
-                docker build -t ${IMAGE_NAME}:latest .
+                docker build -t armandopopa/atc-todo-app:1.0 .
                 '''
 
             }
@@ -91,22 +91,19 @@ pipeline {
         }
 
 
-	stage('Deploy Container') {
+	stage('Deploy to Kubernetes') {
 
     	     steps {
 
-        	echo "Deploying ATC application"
+		echo "Deploying application to Kubernetes"
+        	
+		sh '''
+		 kubectl apply -f k8s/namespace.yaml
+        	kubectl apply -f k8s/deployment.yaml
+        	kubectl apply -f k8s/service.yaml        	
 
-        	sh '''
-        	docker stop atc-app || true
-        	docker rm atc-app || true
-		docker volume create atc-data || true
-
-        	docker run -d \
-        	--name atc-app \
-        	-p 5000:5000 \
-        	-v atc-data:/app/data \
-		atc-todo-app:latest
+		kubectl rollout restart deployment/atc-todo-app -n atc
+        	kubectl rollout status deployment/atc-todo-app -n atc
         	'''
 
     	      }

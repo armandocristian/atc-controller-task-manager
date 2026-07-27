@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: atc-todo-app
+  namespace: atc
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: atc-todo-app
+
+  template:
+    metadata:
+      labels:
+        app: atc-todo-app
+
+    spec:
+      containers:
+      - name: atc-todo-app
+
+        image: armandopopa/atc-todo-app:1.0
+
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 5000
