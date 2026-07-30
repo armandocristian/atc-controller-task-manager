@@ -279,3 +279,4 @@ Directorul **screenshots/** conține capturi care demonstrează funcționarea pr
 **Cristian Popa**
 
 Proiect realizat în cadrul cursului DevOps.
+Hello
